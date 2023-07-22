@@ -5,7 +5,7 @@ const url = "https://stickersnepal.com/";
 
 (async () => {
     try {
-        const porducts = [];
+        const products = [];
         const response = await request({
             uri: url,
             headers: {
@@ -17,11 +17,15 @@ const url = "https://stickersnepal.com/";
         });
 
         const $ = cheerio.load(response);
-        $('h5[class="mb-0 text-sm"] > a').each((index, element) => {
-            const productName = $(element).text().trim();
-            porducts.push({name:productName})
+        $('div[class="row"]').children().each((_, element) => {
+            const name = $(element).find('h5[class="mb-0 text-sm"] > a').text().trim();
+            const price = $(element).find('p[class="small text-muted mb-2"]').text().trim();
+            const image = $(element).find('img[class="img-fluid"]').attr('src');
+            if(name){
+                products.push({name:name,price:price,image:`https://stickersnepal.com/${image}`})
+            }
         });
-        console.log(porducts);
+        console.log(products);
     } catch (error) {
         console.error("Error:", error);
     }
